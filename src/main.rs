@@ -7,13 +7,10 @@ use std::collections::HashSet;
 
 use serenity::async_trait;
 use serenity::client::bridge::gateway::ShardManager;
-use serenity::framework::standard::macros::group;
 use serenity::framework::StandardFramework;
 use serenity::http::Http;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
-
-use crate::commands::ping::*;
 
 pub struct ShardManagerContainer;
 
@@ -30,9 +27,6 @@ impl EventHandler for Handler {
     }
 }
 
-#[group]
-#[commands(ping)]
-struct Test;
 
 #[tokio::main]
 async fn main() {
@@ -61,7 +55,7 @@ async fn main() {
                      .on_mention(Some(bot_id))
                      .prefix("-")
                      .owners(owners))
-                     .group(&TEST_GROUP);
+                     .group(&commands::TEST_GROUP);
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
