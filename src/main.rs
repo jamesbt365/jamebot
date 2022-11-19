@@ -55,7 +55,7 @@ async fn main() {
                      .on_mention(Some(bot_id))
                      .prefix("-")
                      .owners(owners))
-                     .group(&commands::TEST_GROUP);
+                     .group(&commands::META_GROUP);
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES

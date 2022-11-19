@@ -1,8 +1,8 @@
 use serenity::framework::standard::macros::group;
 
-pub mod ping;
+pub mod meta;
 
-use self::ping::*;
+use self::meta::*;
 #[group]
-#[commands(ping)]
-pub struct Test;
+#[commands(ping, source)]
+pub struct Meta;
