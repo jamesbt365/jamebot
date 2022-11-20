@@ -11,6 +11,7 @@ use serenity::framework::StandardFramework;
 use serenity::http::Http;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
+use tracing::error;
 
 pub struct ShardManagerContainer;
 
@@ -30,7 +31,7 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
-    let token = env::var("DISCORD_TOKEN").expect("Cannot find envvar DISCORD_TOKEN");
+    let token = env::var("DISCORD_TOKEN").expect("Could not find DISCORD_TOKEN in env");
 
     let http = Http::new(&token);
 
@@ -61,16 +62,11 @@ async fn main() {
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;
 
-        
     let mut client = Client::builder(&token, intents)
-    .framework(framework)
-    .event_handler(Handler)
-    .await
-    .expect("Failed to create client");
-
-    if let Err(why) = client.start().await {
-        println!("Client error: {:?}", why);
-    }
+        .framework(framework)
+        .event_handler(Handler)
+        .await
+        .expect("Err creating client");
 
     {
         let mut data = client.data.write().await;
@@ -85,7 +81,6 @@ async fn main() {
     });
 
     if let Err(why) = client.start().await {
-        println!("Client error: {:?}", why);
+        error!("Client error: {:?}", why);
     }
-
 }
