@@ -4,5 +4,5 @@ pub mod meta;
 
 use self::meta::*;
 #[group]
-#[commands(ping, source, shutdown)]
+#[commands(ping, source, shutdown, test)]
 pub struct Meta;

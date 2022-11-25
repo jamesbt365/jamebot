@@ -1,6 +1,5 @@
 mod commands;
 
-
 use std::env;
 use std::sync::Arc;
 use std::collections::HashSet;
