@@ -10,3 +10,4 @@ serenity = { version = "0.11", default-features = false, features = ["cache", "c
 tokio = { version = "1.21.2", features = ["macros", "signal", "rt-multi-thread"] }
 tracing = "0.1.37"
 execute = "0.2.11"
+rand = "0.8.5"

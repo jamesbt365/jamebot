@@ -454,6 +454,7 @@ name = "jamebot"
 version = "0.1.0"
 dependencies = [
  "execute",
+ "rand",
  "serenity",
  "tokio",
  "tracing",

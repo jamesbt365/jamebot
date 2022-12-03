@@ -1,6 +1,7 @@
 use serenity::framework::standard::macros::group;
 
 pub mod meta;
+pub mod fun;
 pub mod rejects;
 
 use self::{meta::*, rejects::*};

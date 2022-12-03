@@ -1,4 +1,5 @@
 mod commands;
+mod util;
 
 use std::env;
 use std::sync::Arc;
@@ -56,6 +57,7 @@ async fn main() {
                      .prefix("-")
                      .owners(owners))
                      .group(&commands::META_GROUP)
+                     .group(&commands::fun::FUN_GROUP)
                      .group(&commands::REJECTS_GROUP)
                      .group(&commands::OWNER_GROUP);
 
