@@ -23,7 +23,7 @@ const HUGS: &[&str] = &[
 
 #[command]
 async fn hug(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
-    
+
     let target_id = match args.single::<String>().ok().and_then(parse_id) {
         Some(id) => UserId(id),
         None => {
@@ -32,7 +32,7 @@ async fn hug(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
             return Ok(());
         }
     };
-    
+
     let target_user = match target_id.to_user(&ctx).await {
         Ok(u) => u,
         Err(_) => {
@@ -54,7 +54,7 @@ async fn hug(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
                     "{} hugged {}!",
                     msg.author.name,
                     target_user.name
-                )); 
+                ));
                 e.image(&hug);
                 e.colour(0x2F3136);
 
