@@ -12,6 +12,13 @@ const HUGS: &[&str] = &[
     "https://cdn.discordapp.com/attachments/706370092283461695/1048732202327875724/1ca7b7244fc002d31a5c0b3a80a5e6e3.jpg",
     "https://cdn.discordapp.com/attachments/706370092283461695/1048732202600513646/9ed8e672cdc7c9b87dba7af1ec965a0a.jpg",
     "https://cdn.discordapp.com/attachments/706370092283461695/1048732202868932678/31d3117eaefdd4bada76573cd1860baf.jpg",
+    "https://cdn.discordapp.com/attachments/872953485296009316/1048735119835402302/1578763433581.png",
+    "https://cdn.discordapp.com/attachments/872953485296009316/1048735120179343381/1630541183104.jpg",
+    "https://cdn.discordapp.com/attachments/872953485296009316/1048735120468738098/1637626165611.jpg",
+    "https://cdn.discordapp.com/attachments/872953485296009316/1048735120716206162/1638486503625.png",
+    "https://cdn.discordapp.com/attachments/872953485296009316/1048735121047564328/1642977586623.jpg",
+    "https://cdn.discordapp.com/attachments/872953485296009316/1048735121286627358/1643838342089.png",
+    "https://cdn.discordapp.com/attachments/872953485296009316/1048735121584427080/1643620971342.jpg",
 ];
 
 #[command]
