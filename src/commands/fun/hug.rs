@@ -4,6 +4,7 @@ use serenity::model::prelude::*;
 use serenity::prelude::*;
 use crate::util::parse_id;
 
+
 const HUGS: &[&str] = &[
     "https://cdn.discordapp.com/attachments/706370092283461695/1048732201040224336/6c4d1a89eb9bcf38bcba1ae379275384.jpg",
     "https://cdn.discordapp.com/attachments/706370092283461695/1048732201275113513/00fc0198b5669801a4549fb37d95ca5b.jpg",

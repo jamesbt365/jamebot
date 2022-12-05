@@ -1,3 +1,4 @@
+pub mod events;
 mod commands;
 mod util;
 
@@ -10,6 +11,7 @@ use serenity::client::bridge::gateway::ShardManager;
 use serenity::framework::StandardFramework;
 use serenity::http::Http;
 use serenity::model::gateway::Ready;
+use serenity::model::prelude::Message;
 use serenity::prelude::*;
 use tracing::error;
 
@@ -23,9 +25,14 @@ struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
-    async fn ready(&self, _: Context, ready: Ready) {
-        println!("Connected as {}#{}", ready.user.name, ready.user.discriminator);
+
+async fn ready(&self, _: Context, ready: Ready) {
+    println!("Connected as {}#{}", ready.user.name, ready.user.discriminator);
     }
+
+    async fn message(&self, ctx: Context, msg: Message) {
+        events::message(&ctx, &msg).await;
+      }
 }
 
 
