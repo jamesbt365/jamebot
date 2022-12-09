@@ -66,7 +66,9 @@ async fn main() {
                      .group(&commands::META_GROUP)
                      .group(&commands::fun::FUN_GROUP)
                      .group(&commands::REJECTS_GROUP)
-                     .group(&commands::OWNER_GROUP);
+                     .group(&commands::OWNER_GROUP)
+                     .help(&commands::HELP)
+                     .bucket("fun", |b| b.delay(2).time_span(15).limit(4)).await; // anti Trash mechanism.
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES

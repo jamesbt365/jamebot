@@ -23,6 +23,8 @@ const HUGS: &[&str] = &[
 ];
 
 #[command]
+#[description("hug your friends!! :3")]
+#[bucket(fun)]
 async fn hug(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
 
     let target_id = match args.single::<String>().ok().and_then(parse_id) {
