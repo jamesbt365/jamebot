@@ -6,7 +6,7 @@ use crate::util::parse_id;
 
 
 const HUGS: &[&str] = &[
-    // Links additions
+    // Link's additions
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050569361829666856/6c4d1a89eb9bcf38bcba1ae379275384.jpg",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050569361456377856/00fc0198b5669801a4549fb37d95ca5b.jpg",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050569361066315867/0ce07377d31ab045a0dc35810832e296.jpg",
@@ -21,7 +21,7 @@ const HUGS: &[&str] = &[
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050569346197491782/1642977586623.jpg",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050569345853554768/1643838342089.png",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050569345568350218/1643620971342.jpg",
-    // Trash's
+    // Trash's additions
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050571812355973171/Hugging_002.jpg",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050571812016246896/Hugging_003.jpg",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050571811659726910/Hugging_004.jpg",
