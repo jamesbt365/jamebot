@@ -1,3 +1,4 @@
+pub mod events;
 mod commands;
 mod util;
 
@@ -10,6 +11,7 @@ use serenity::client::bridge::gateway::ShardManager;
 use serenity::framework::StandardFramework;
 use serenity::http::Http;
 use serenity::model::gateway::Ready;
+use serenity::model::prelude::Message;
 use serenity::prelude::*;
 use tracing::error;
 
@@ -23,9 +25,14 @@ struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
-    async fn ready(&self, _: Context, ready: Ready) {
-        println!("Connected as {}#{}", ready.user.name, ready.user.discriminator);
+
+async fn ready(&self, _: Context, ready: Ready) {
+    println!("Connected as {}#{}", ready.user.name, ready.user.discriminator);
     }
+
+    async fn message(&self, ctx: Context, msg: Message) {
+        events::message(&ctx, &msg).await;
+      }
 }
 
 
@@ -59,7 +66,9 @@ async fn main() {
                      .group(&commands::META_GROUP)
                      .group(&commands::fun::FUN_GROUP)
                      .group(&commands::REJECTS_GROUP)
-                     .group(&commands::OWNER_GROUP);
+                     .group(&commands::OWNER_GROUP)
+                     .help(&commands::HELP)
+                     .bucket("fun", |b| b.delay(2).time_span(15).limit(4)).await; // anti Trash mechanism.
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
