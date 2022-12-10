@@ -44,7 +44,14 @@ const HUGS: &[&str] = &[
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050572881186279545/Hugging_027.jpg",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050572880787804170/Hugging_028.jpg",
     // Phoenix's additions
-    "https://media.discordapp.net/attachments/829787267992256562/1050956518486458419/image0.jpg”
+    "https://media.discordapp.net/attachments/829787267992256562/1050956518486458419/image0.jpg"
+    "https://media.discordapp.net/attachments/829787267992256562/1050960293745922150/image0.jpg"
+    "https://media.discordapp.net/attachments/829787267992256562/1050960550911283271/image0.jpg"
+    "https://media.discordapp.net/attachments/829787267992256562/1050960752908972132/image0.jpg"
+    "https://media.discordapp.net/attachments/829787267992256562/1050960971029545021/image0.jpg"
+    "https://media.discordapp.net/attachments/829787267992256562/1050961267050942584/image0.jpg"
+    "https://media.discordapp.net/attachments/829787267992256562/1050961309325340742/image0.jpg"
+    "https://media.discordapp.net/attachments/829787267992256562/1050961805398245437/image0.jpg"
 ];
 
 #[command]
