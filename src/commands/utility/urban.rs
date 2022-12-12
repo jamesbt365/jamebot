@@ -25,7 +25,6 @@ struct Definition {
 
 
 #[command]
-#[bucket(fun)]
 #[description("Get the definition of a word or phrase.")]
 async fn urban(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     if args.rest().is_empty() {

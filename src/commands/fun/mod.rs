@@ -1,11 +1,9 @@
 use serenity::framework::standard::macros::group;
 
 mod hug;
-mod urban;
-mod search;
 
-use self::{hug::*, urban::*, search::*};
+use self::hug::*;
 #[group]
-#[commands(hug, urban, ddg)]
+#[commands(hug)]
 #[only_in("guild")]
 pub struct Fun;
