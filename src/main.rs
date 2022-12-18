@@ -1,99 +1,92 @@
-pub mod events;
-mod commands;
-mod util;
+use chrono::{DateTime, Utc};
+use poise::serenity_prelude as serenity;
+use std::{env::var, time::Duration};
 
-use std::env;
-use std::sync::Arc;
-use std::collections::HashSet;
+type Error = Box<dyn std::error::Error + Send + Sync>;
+type Context<'a> = poise::Context<'a, Data, Error>;
 
-use serenity::async_trait;
-use serenity::client::bridge::gateway::ShardManager;
-use serenity::framework::StandardFramework;
-use serenity::http::Http;
-use serenity::model::gateway::Ready;
-use serenity::model::prelude::Message;
-use serenity::prelude::*;
-use tracing::error;
-
-pub struct ShardManagerContainer;
-
-impl TypeMapKey for ShardManagerContainer {
-    type Value = Arc<Mutex<ShardManager>>;
+struct Data {
+    time_started: DateTime<Utc>,
 }
 
-struct Handler;
 
-#[async_trait]
-impl EventHandler for Handler {
+#[poise::command(prefix_command, hide_in_help)]
+async fn register(ctx: Context<'_>) -> Result<(), Error> {
+    poise::builtins::register_application_commands_buttons(ctx).await?;
 
-async fn ready(&self, _: Context, ready: Ready) {
-    println!("Connected as {}#{}", ready.user.name, ready.user.discriminator);
+    Ok(())
+}
+
+async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
+    // stolen from example
+    match error {
+        poise::FrameworkError::Setup { error, .. } => panic!("Failed to start bot: {:?}", error),
+        poise::FrameworkError::Command { error, ctx } => {
+            println!("Error in command `{}`: {:?}", ctx.command().name, error,);
+        }
+        error => {
+            if let Err(e) = poise::builtins::on_error(error).await {
+                println!("Error while handling error: {}", e)
+            }
+        }
     }
-
-    async fn message(&self, ctx: Context, msg: Message) {
-        events::message(&ctx, &msg).await;
-      }
 }
-
 
 #[tokio::main]
 async fn main() {
-    let token = env::var("DISCORD_TOKEN").expect("Could not find DISCORD_TOKEN in env");
 
-    let http = Http::new(&token);
+    let options = poise::FrameworkOptions {
+        commands: vec![
+            register()
 
-    let (owners, bot_id) = match http.get_current_application_info().await {
-        Ok(info) => {
-            let mut owners = HashSet::new();
-            if let Some(team) = info.team {
-                owners.insert(team.owner_user_id);
-            } else {
-                owners.insert(info.owner.id);
-            }
-            match http.get_current_user().await {
-                Ok(bot_id) => (owners, bot_id.id),
-                Err(why) => panic!("Could not access the bot id: {:?}", why),
-            }
+        ],
+        prefix_options: poise::PrefixFrameworkOptions {
+            prefix: Some("-".into()),
+            edit_tracker: Some(poise::EditTracker::for_timespan(Duration::from_secs(3600))),
+            ..Default::default()
         },
-        Err(why) => panic!("Could not access application info: {:?}", why),
+
+        on_error: |error| Box::pin(on_error(error)),
+
+        pre_command: |ctx| {
+            Box::pin(async move {
+                println!("Executing command {}...", ctx.command().qualified_name);
+            })
+        },
+
+        post_command: |ctx| {
+            Box::pin(async move {
+                println!("Executed command {}!", ctx.command().qualified_name);
+            })
+        },
+        // idk what this really does
+        skip_checks_for_owners: false,
+        event_handler: |_ctx, event, _framework, _data| {
+            Box::pin(async move {
+                println!("Got an event in event handler: {:?}", event.name());
+                Ok(())
+            })
+        },
+        ..Default::default()
     };
 
-    let framework = StandardFramework::new()
-          .configure(|c| c
-                     .on_mention(Some(bot_id))
-                     .prefix("-")
-                     .owners(owners))
-                     .group(&commands::META_GROUP)
-                     .group(&commands::fun::FUN_GROUP)
-                     .group(&commands::REJECTS_GROUP)
-                     .group(&commands::OWNER_GROUP)
-                     .group(&commands::utility::UTILITY_GROUP)
-                     .help(&commands::HELP)
-                     .bucket("fun", |b| b.delay(2).time_span(15).limit(4)).await; // anti Trash mechanism.
-
-    let intents = GatewayIntents::GUILD_MESSAGES
-        | GatewayIntents::DIRECT_MESSAGES
-        | GatewayIntents::MESSAGE_CONTENT;
-
-    let mut client = Client::builder(&token, intents)
-        .framework(framework)
-        .event_handler(Handler)
+    poise::Framework::builder()
+        .token(
+            var("DISCORD_TOKEN")
+                .expect("Missing `DISCORD_TOKEN` env var, see README for more information."),
+        )
+        .setup(move |_ctx, _ready, _framework| {
+            Box::pin(async move {
+                Ok(Data {
+                    time_started: Utc::now(),
+                })
+            })
+        })
+        .options(options)
+        .intents(
+            serenity::GatewayIntents::non_privileged() | serenity::GatewayIntents::MESSAGE_CONTENT,
+        )
+        .run()
         .await
-        .expect("Err creating client");
-
-    {
-        let mut data = client.data.write().await;
-        data.insert::<ShardManagerContainer>(client.shard_manager.clone());
-    }
-
-    let shard_manager = client.shard_manager.clone();
-
-    tokio::spawn(async move {
-        tokio::signal::ctrl_c().await.expect("Could not register ctrl+c handler");
-        shard_manager.lock().await.shutdown_all().await;
-    });
-
-    if let Err(why) = client.start().await {
-        error!("Client error: {:?}", why);
-    }
+        .unwrap();
 }
