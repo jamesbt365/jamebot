@@ -1,7 +1,7 @@
 use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 
-use rand::{thread_rng, seq::SliceRandom};
+use rand::{seq::SliceRandom, thread_rng};
 
 const HUGS: &[&str] = &[
     // Link's additions
@@ -49,7 +49,7 @@ const HUGS: &[&str] = &[
     "https://media.discordapp.net/attachments/829787267992256562/1050961805398245437/image0.jpg",
 ];
 
-#[poise::command(prefix_command, slash_command, category = "Fun", user_cooldown="4")]
+#[poise::command(prefix_command, slash_command, category = "Fun", user_cooldown = "4")]
 pub async fn hug(
     ctx: Context<'_>,
     #[description = "The user to hug!! :3"] user: serenity::User,
@@ -63,11 +63,7 @@ pub async fn hug(
 
     ctx.send(|e| {
         e.embed(|e|
-            e.title(format!(
-                "{} hugged {}!",
-                ctx.author().name,
-                user.name
-            ))
+            e.title(format!("{} hugged {}!", ctx.author().name, user.name))
             .image(&hug)
             // maybe add the author thing later
         )

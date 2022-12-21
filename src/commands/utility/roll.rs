@@ -1,4 +1,4 @@
-use rand::{thread_rng, prelude::Distribution};
+use rand::{prelude::Distribution, thread_rng};
 use crate::{Context, Error};
 
 #[poise::command(prefix_command, slash_command, category = "Utility", user_cooldown="5")]
