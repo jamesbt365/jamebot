@@ -1,9 +1,7 @@
-use rand::{seq::SliceRandom, thread_rng};
-use serenity::framework::standard::{macros::command, Args, CommandResult};
-use serenity::model::prelude::*;
-use serenity::prelude::*;
-use crate::util::parse_id;
+use crate::{Context, Error};
+use poise::serenity_prelude as serenity;
 
+use rand::{seq::SliceRandom, thread_rng};
 
 const HUGS: &[&str] = &[
     // Link's additions
@@ -44,64 +42,33 @@ const HUGS: &[&str] = &[
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050572881186279545/Hugging_027.jpg",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050572880787804170/Hugging_028.jpg",
     // Phoenix's additions
-    "https://media.discordapp.net/attachments/829787267992256562/1050956518486458419/image0.jpg",
     "https://media.discordapp.net/attachments/829787267992256562/1050960293745922150/image0.jpg",
-    "https://media.discordapp.net/attachments/829787267992256562/1050960550911283271/image0.jpg",
     "https://media.discordapp.net/attachments/829787267992256562/1050960752908972132/image0.jpg",
     "https://media.discordapp.net/attachments/829787267992256562/1050960971029545021/image0.jpg",
     "https://media.discordapp.net/attachments/829787267992256562/1050961267050942584/image0.jpg",
-    "https://media.discordapp.net/attachments/829787267992256562/1050961309325340742/image0.jpg",
     "https://media.discordapp.net/attachments/829787267992256562/1050961805398245437/image0.jpg",
 ];
 
-#[command]
-#[description("hug your friends!! :3")]
-#[bucket(fun)]
-async fn hug(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
-
-    let target_id = match args.single::<String>().ok().and_then(parse_id) {
-        Some(id) => UserId(id),
-        None => {
-            msg.channel_id.say(&ctx, "You can't hug nobody.").await?;
-
-            return Ok(());
-        }
-    };
-
-    let target_user = match target_id.to_user(&ctx).await {
-        Ok(u) => u,
-        Err(_) => {
-            msg.channel_id.say(&ctx, "Failed to fetch user, are you selecting a valid user?").await?;
-
-            return Ok(());
-        }
-    };
+#[poise::command(prefix_command, slash_command, category = "Fun", user_cooldown = "4")]
+pub async fn hug(
+    ctx: Context<'_>,
+    #[description = "The user to hug!! :3"] user: serenity::User,
+) -> Result<(), Error> {
 
     let hug = {
         let mut rng = thread_rng();
         format!("{}", HUGS.choose(&mut rng).unwrap())
     };
 
-    msg.channel_id
-        .send_message(ctx, |m| {
-            m.embed(|e| {
-                e.title(format!(
-                    "{} hugged {}!",
-                    msg.author.name,
-                    target_user.name
-                ));
-                e.image(&hug);
-                e.colour(0x2F3136);
 
-                e.author(|a| {
-                    a.name(&target_user.name);
-                    a.icon_url(target_user.face());
+    ctx.send(|e| {
+        e.embed(|e|
+            e.title(format!("{} hugged {}!", ctx.author().name, user.name))
+            .image(&hug)
+            // maybe add the author thing later
+        )
+    })
+    .await?;
 
-                    a
-                });
-                e
-            })
-        })
-        .await?;
     Ok(())
 }
