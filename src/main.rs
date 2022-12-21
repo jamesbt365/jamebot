@@ -1,12 +1,14 @@
-use chrono::{DateTime, Utc};
+mod commands;
+use commands::*;
+
 use poise::serenity_prelude as serenity;
 use std::{env::var, time::Duration};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-struct Data {
-    time_started: DateTime<Utc>,
+pub struct Data {
+    time_started: std::time::Instant,
 }
 
 
@@ -37,7 +39,15 @@ async fn main() {
 
     let options = poise::FrameworkOptions {
         commands: vec![
-            register()
+            register(),
+            meta::source(),
+            meta::shutdown(),
+            meta::uptime(),
+            meta::help(),
+            fun::hug::hug(),
+            utility::urban::urban(),
+            utility::roll::roll(),
+
 
         ],
         prefix_options: poise::PrefixFrameworkOptions {
@@ -78,7 +88,7 @@ async fn main() {
         .setup(move |_ctx, _ready, _framework| {
             Box::pin(async move {
                 Ok(Data {
-                    time_started: Utc::now(),
+                    time_started: std::time::Instant::now(),
                 })
             })
         })
