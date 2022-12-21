@@ -3,13 +3,14 @@ use crate::{Context, Error};
 
 // add proper ping command
 
+/// Post a link to my source code
 #[poise::command(slash_command, prefix_command, category = "Meta")]
 pub async fn source(ctx: Context<'_>) -> Result<(), Error> {
     ctx.say("<https://github.com/jamesbt365/jamebot").await?;
     Ok(())
 }
 
-
+/// Shuts the bot down.
 #[poise::command(prefix_command, owners_only, hide_in_help)]
 pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
     ctx.say("** Bailing out, you are on your own. Good luck.**").await?;
@@ -17,6 +18,7 @@ pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
         Ok(())
 }
 
+/// Displays JameBot's uptime
 #[poise::command(slash_command, prefix_command, category = "Meta")]
 pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
     let uptime = std::time::Instant::now() - ctx.data().time_started;
@@ -37,7 +39,7 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-
+/// Show general help or help to a specific command
 #[poise::command(prefix_command, track_edits, slash_command, category = "Miscellaneous")]
 pub async fn help(
     ctx: Context<'_>,

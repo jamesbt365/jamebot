@@ -48,7 +48,7 @@ const HUGS: &[&str] = &[
     "https://media.discordapp.net/attachments/829787267992256562/1050961267050942584/image0.jpg",
     "https://media.discordapp.net/attachments/829787267992256562/1050961805398245437/image0.jpg",
 ];
-
+/// Hug your friends :3
 #[poise::command(prefix_command, slash_command, category = "Fun", user_cooldown = "4")]
 pub async fn hug(
     ctx: Context<'_>,

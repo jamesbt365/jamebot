@@ -1,6 +1,7 @@
 use rand::{prelude::Distribution, thread_rng};
 use crate::{Context, Error};
 
+/// Roll some dice
 #[poise::command(prefix_command, slash_command, category = "Utility", user_cooldown="5")]
 pub async fn roll(
     ctx: Context<'_>,
