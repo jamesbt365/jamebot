@@ -19,6 +19,8 @@ struct Definition {
     permalink: String,
 }
 
+// TODO: Add option to switch to a different definition
+
 /// Get the definition of a term on Urban Dictionary
 #[poise::command(prefix_command, slash_command, category = "Utility")]
 pub async fn urban(

@@ -47,6 +47,8 @@ async fn main() {
             fun::hug::hug(),
             utility::urban::urban(),
             utility::roll::roll(),
+            general::avatar::avatar(),
+            general::userinfo::userinfo(),
 
 
         ],
