@@ -6,7 +6,7 @@ use crate::{Context, Error};
 /// Post a link to my source code
 #[poise::command(slash_command, prefix_command, category = "Meta")]
 pub async fn source(ctx: Context<'_>) -> Result<(), Error> {
-    ctx.say("<https://github.com/jamesbt365/jamebot").await?;
+    ctx.say("<https://github.com/jamesbt365/jamebot>").await?;
     Ok(())
 }
 
