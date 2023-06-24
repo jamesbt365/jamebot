@@ -1,3 +1,5 @@
+mod commands;
+use commands::*;
 
 use poise::serenity_prelude as serenity;
 use std::{env::var, time::Duration};
@@ -35,6 +37,8 @@ async fn main() {
     let options = poise::FrameworkOptions {
         commands: vec![
             register(),
+            meta::source(),
+            meta::shutdown(),
         ],
         prefix_options: poise::PrefixFrameworkOptions {
             prefix: Some("-".into()),
