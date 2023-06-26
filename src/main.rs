@@ -39,6 +39,11 @@ async fn main() {
             register(),
             meta::source(),
             meta::shutdown(),
+            fun::hug::hug(),
+            utility::urban::urban(),
+            utility::roll::roll(),
+            general::avatar::avatar(),
+            general::userinfo::userinfo(),
         ],
         prefix_options: poise::PrefixFrameworkOptions {
             prefix: Some("-".into()),
