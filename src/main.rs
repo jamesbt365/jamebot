@@ -7,8 +7,9 @@ use std::{env::var, time::Duration};
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-pub struct Data {}
-
+pub struct Data {
+    time_started: std::time::Instant,
+}
 
 #[poise::command(prefix_command, hide_in_help)]
 async fn register(ctx: Context<'_>) -> Result<(), Error> {
@@ -39,6 +40,8 @@ async fn main() {
             register(),
             meta::source(),
             meta::shutdown(),
+            meta::uptime(),
+            meta::help(),
             fun::hug::hug(),
             utility::urban::urban(),
             utility::roll::roll(),
@@ -82,7 +85,9 @@ async fn main() {
         )
         .setup(move |_ctx, _ready, _framework| {
             Box::pin(async move {
-                Ok(Data {})
+                Ok(Data {
+                    time_started: std::time::Instant::now(),
+                })
             })
         })
         .options(options)
