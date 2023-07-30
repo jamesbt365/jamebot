@@ -10,7 +10,7 @@ pub async fn avatar(
 
     ctx.send(|e| {
         e.embed(|e|
-            e.title(format!("{}{}'s avatar:", user.name, user.discriminator))
+            e.title(format!("{}#{}'s avatar:", user.name, user.discriminator))
             .image(user.face())
         )
     })
