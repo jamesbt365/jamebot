@@ -4,11 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-poise = "0.5.5"
-tokio = { version = "1.28.2", features = ["macros", "signal", "rt-multi-thread"] }
-sqlx = { version = "0.6.3", features = ["macros", "runtime-tokio-rustls", "postgres", "offline"] }
+poise = { git = "https://github.com/serenity-rs/poise", branch = "current" }
+tokio = { version = "1.29.1", features = ["macros", "signal", "rt-multi-thread"] }
+sqlx = { version = "0.7.1", features = ["macros", "runtime-tokio-rustls", "postgres"] }
 rand = "0.8.5"
 reqwest = "0.11.18"
-serde = "1.0.164"
-
+serde = "1.0.179"
 openssl = { version = "0.10", features = ["vendored"] } # for cross compiling
