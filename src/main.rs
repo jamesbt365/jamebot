@@ -7,6 +7,20 @@ use std::{env::var, time::Duration};
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+
+async fn event_handler(
+    ctx: &serenity::Context,
+    event: &poise::Event<'_>,
+    _ctx_poise: poise::FrameworkContext<'_, Data, Error>,
+    data: &Data,
+) -> Result<(), Error> {
+    match event {
+        _ => (),
+    }
+
+    Ok(())
+}
+
 pub struct Data {
     time_started: std::time::Instant,
 }
@@ -69,11 +83,8 @@ async fn main() {
         },
 
         skip_checks_for_owners: false,
-        event_handler: |_ctx, event, _framework, _data| {
-            Box::pin(async move {
-                println!("Got an event in event handler: {:?}", event.name());
-                Ok(())
-            })
+        event_handler: |ctx, event, framework, data| {
+            Box::pin(event_handler(ctx, event, framework, data))
         },
         ..Default::default()
     };
