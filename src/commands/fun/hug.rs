@@ -29,7 +29,6 @@ const HUGS: &[&str] = &[
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050571810212683786/Hugging_008.jpg",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050572272085254195/Hugging_010.jpg",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050572318516183091/Hugging_012.jpg",
-    "https://cdn.discordapp.com/attachments/1050568393251623023/1050572443426758817/Hugging_013.jpg",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050572442910871582/Hugging_014.jpg",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050572442369794138/Hugging_015.jpg",
     "https://cdn.discordapp.com/attachments/1050568393251623023/1050572441891635210/Hugging_016.jpg",
