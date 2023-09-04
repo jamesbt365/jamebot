@@ -1,25 +1,14 @@
 mod commands;
 use commands::*;
 
+mod event_handler;
+
 use poise::serenity_prelude as serenity;
 use std::{env::var, time::Duration};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-
-async fn event_handler(
-    ctx: &serenity::Context,
-    event: &poise::Event<'_>,
-    _ctx_poise: poise::FrameworkContext<'_, Data, Error>,
-    data: &Data,
-) -> Result<(), Error> {
-    match event {
-        _ => (),
-    }
-
-    Ok(())
-}
 
 pub struct Data {
     time_started: std::time::Instant,
@@ -29,6 +18,22 @@ pub struct Data {
 async fn register(ctx: Context<'_>) -> Result<(), Error> {
     poise::builtins::register_application_commands_buttons(ctx).await?;
 
+    Ok(())
+}
+
+
+
+// Define the 'dmuser' command
+#[poise::command(prefix_command, track_edits, owners_only)]
+pub async fn dmuser(
+    ctx: Context<'_>,
+    #[description = "ID"] user_id: poise::serenity_prelude::UserId,
+    #[rest]
+    #[description = "Message"]
+    messages: String,
+) -> Result<(), Error> {
+    let user = user_id.to_user(&ctx).await?;
+    user.direct_message(&ctx, |m| m.content(messages)).await?;
     Ok(())
 }
 
@@ -52,6 +57,7 @@ async fn main() {
     let options = poise::FrameworkOptions {
         commands: vec![
             register(),
+            dmuser(),
             meta::source(),
             meta::shutdown(),
             meta::uptime(),
@@ -84,7 +90,7 @@ async fn main() {
 
         skip_checks_for_owners: false,
         event_handler: |ctx, event, framework, data| {
-            Box::pin(event_handler(ctx, event, framework, data))
+            Box::pin(event_handler::event_handler(ctx, event, framework, data))
         },
         ..Default::default()
     };
@@ -108,4 +114,6 @@ async fn main() {
         .run()
         .await
         .unwrap();
+
+
 }
