@@ -25,11 +25,23 @@ pub async fn event_handler(
             id: EmojiId(1028320732649893888),
             name: Some("morbius".to_string()),
         });
-        map.insert("32 bit link", ReactionType::Custom {
+        let bitlink = ReactionType::Custom {
             animated: false,
             id: EmojiId(901179398093422643),
             name: Some("32bitlink".to_string()),
-        });
+        };
+        map.insert("32bitlink", bitlink.clone());
+        map.insert("32 bit link", bitlink.clone());
+
+        let rimokon = ReactionType::Custom {
+            animated: false,
+            id: EmojiId(1069331591953911848),
+            name: Some("rimokon".to_string()),
+        };
+        map.insert("rimokon", rimokon.clone());
+        map.insert("remote", rimokon.clone());
+        map.insert("control", rimokon.clone());
+        map.insert("sit down please yeah", rimokon.clone());
         map
     };
 

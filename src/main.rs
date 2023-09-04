@@ -67,6 +67,7 @@ async fn main() {
             utility::roll::roll(),
             general::avatar::avatar(),
             general::userinfo::userinfo(),
+            utility::colour::hex(),
         ],
         prefix_options: poise::PrefixFrameworkOptions {
             prefix: Some("-".into()),
