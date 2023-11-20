@@ -44,7 +44,7 @@ pub async fn event_handler(
         map.insert("sit down please yeah", rimokon.clone());
         map
     };
-
+    #[allow(clippy::single_match)] // yeah
     match event {
         poise::Event::Message { new_message } => {
             let content_lowercase = new_message.content.to_lowercase();

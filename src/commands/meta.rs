@@ -11,7 +11,7 @@ pub async fn source(ctx: Context<'_>) -> Result<(), Error> {
 /// Shutdown the bot gracefully.
 #[poise::command(prefix_command, owners_only, hide_in_help)]
 pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
-    ctx.say("** Bailing out, you are on your own. Good luck.**").await?;
+    ctx.say("**Bailing out, you are on your own. Good luck.**").await?;
     ctx.framework().shard_manager().lock().await.shutdown_all().await;
         Ok(())
 }
@@ -38,6 +38,7 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
 }
 
 /// Show general help or help to a specific command
+// implement a custom one later.
 #[poise::command(prefix_command, track_edits, slash_command, category = "Miscellaneous")]
 pub async fn help(
     ctx: Context<'_>,

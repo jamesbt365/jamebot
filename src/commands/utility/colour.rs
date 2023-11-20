@@ -1,5 +1,5 @@
 use crate::{Context, Error};
-use poise::serenity_prelude as serenity;
+//use poise::serenity_prelude as serenity;
 use image::{DynamicImage, ImageBuffer, Rgba};
 
 #[poise::command(prefix_command, slash_command, category = "Utility", user_cooldown = "5")]
