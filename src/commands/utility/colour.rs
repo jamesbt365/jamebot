@@ -1,22 +1,26 @@
 use crate::{Context, Error};
-//use poise::serenity_prelude as serenity;
 use image::{DynamicImage, ImageBuffer, Rgba};
+use poise::serenity_prelude as serenity;
 
-#[poise::command(prefix_command, slash_command, category = "Utility", user_cooldown = "5")]
+#[poise::command(
+    prefix_command,
+    slash_command,
+    category = "Utility",
+    user_cooldown = "5"
+)]
 pub async fn hex(
     ctx: Context<'_>,
     #[description = "Hex colour code"] colour: String,
 ) -> Result<(), Error> {
+    // make this not save a file.
     let color_image = create_color_image(&colour)?;
 
     let image_path = "colour.png";
     color_image.save(image_path)?;
 
-
-    ctx.send(|e| {
-        e.attachment(image_path.into())
-    })
-    .await?;
+    let attachment = serenity::CreateAttachment::path(image_path).await?;
+    ctx.send(poise::CreateReply::default().attachment(attachment))
+        .await?;
 
     Ok(())
 }

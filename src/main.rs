@@ -1,16 +1,20 @@
 mod commands;
 use commands::*;
-
+mod config;
 mod event_handler;
 
-use poise::serenity_prelude as serenity;
+use config::GuildConfig;
+use poise::serenity_prelude::{self as serenity, GuildId};
 use std::{env::var, time::Duration};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+use sqlx::{postgres::PgPoolOptions, PgPool};
 
 pub struct Data {
+    database: PgPool,
+    guild_cache: DashMap<GuildId, GuildConfig>,
     time_started: std::time::Instant,
 }
 
@@ -21,26 +25,10 @@ async fn register(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-
-
-// Define the 'dmuser' command
-#[poise::command(prefix_command, track_edits, owners_only)]
-pub async fn dmuser(
-    ctx: Context<'_>,
-    #[description = "ID"] user_id: poise::serenity_prelude::UserId,
-    #[rest]
-    #[description = "Message"]
-    messages: String,
-) -> Result<(), Error> {
-    let user = user_id.to_user(&ctx).await?;
-    user.direct_message(&ctx, |m| m.content(messages)).await?;
-    Ok(())
-}
-
 async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
     match error {
         poise::FrameworkError::Setup { error, .. } => panic!("Failed to start bot: {:?}", error),
-        poise::FrameworkError::Command { error, ctx } => {
+        poise::FrameworkError::Command { error, ctx, .. } => {
             println!("Error in command `{}`: {:?}", ctx.command().name, error,);
         }
         error => {
@@ -51,26 +39,65 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
     }
 }
 
+use dashmap::DashMap;
+
 #[tokio::main]
 async fn main() {
+    let database = {
+        let database_url =
+            std::env::var("DATABASE_URL").expect("No database url found in environment variables!");
+
+        let database = PgPoolOptions::new()
+            .connect(&database_url)
+            .await
+            .expect("Failed to connect to database!");
+
+        sqlx::migrate!()
+            .run(&database)
+            .await
+            .expect("Unable to apply migrations!");
+
+        database
+    };
 
     let options = poise::FrameworkOptions {
         commands: vec![
             register(),
-            dmuser(),
             meta::source(),
             meta::shutdown(),
             meta::uptime(),
             meta::help(),
             fun::hug::hug(),
-            utility::urban::urban(),
             utility::roll::roll(),
             general::avatar::avatar(),
-            general::userinfo::userinfo(),
             utility::colour::hex(),
         ],
         prefix_options: poise::PrefixFrameworkOptions {
-            prefix: Some("-".into()),
+            prefix: None,
+            dynamic_prefix: Some(|ctx| {
+                Box::pin(async move {
+                    match ctx.guild_id {
+                        Some(guild_id) => {
+                            // generate guild config from
+                            let guild_config = ctx.data.guild_cache.get(&guild_id);
+                            let prefix = if let Some(config) = guild_config {
+                                config.prefix.clone()
+                            } else {
+                                // No guild config, add one and use default config.
+                                // Maybe do a check for the guild first, then do it.
+                                let config = config::add_guild_config_def(ctx.data, guild_id).await;
+                                // gonna do a lazy unwrap here because I'm not sure how I would actually want to handle a problem.
+                                config.unwrap().prefix
+                            };
+                            Ok(prefix)
+                        }
+                        None => {
+                            // No guild, use default prefix.
+                            Ok(Some(String::from("-")))
+                        }
+                    }
+                })
+            }),
             edit_tracker: Some(poise::EditTracker::for_timespan(Duration::from_secs(3600))),
             ..Default::default()
         },
@@ -90,31 +117,35 @@ async fn main() {
         },
 
         skip_checks_for_owners: false,
-        event_handler: |ctx, event, framework, data| {
-            Box::pin(event_handler::event_handler(ctx, event, framework, data))
+        event_handler: |event: &serenity::FullEvent, framework, data| {
+            Box::pin(event_handler::event_handler(event.clone(), framework, data))
         },
         ..Default::default()
     };
 
-    poise::Framework::builder()
-        .token(
-            var("JAMEBOT_TOKEN")
-                .expect("The JAMEBOT_TOKEN is not set. aborting..."),
-        )
-        .setup(move |_ctx, _ready, _framework| {
-            Box::pin(async move {
-                Ok(Data {
-                    time_started: std::time::Instant::now(),
-                })
+    let framework = poise::Framework::new(options, move |ctx, ready, framework| {
+        Box::pin(async move {
+            println!("Logged in as {}", ready.user.name);
+            poise::builtins::register_globally(ctx, &framework.options().commands).await?;
+            Ok(Data {
+                database,
+                guild_cache: DashMap::new(),
+                time_started: std::time::Instant::now(),
             })
         })
-        .options(options)
-        .intents(
-            serenity::GatewayIntents::non_privileged() | serenity::GatewayIntents::MESSAGE_CONTENT,
-        )
-        .run()
+    });
+
+    let intents = serenity::GatewayIntents::non_privileged()
+        | serenity::GatewayIntents::MESSAGE_CONTENT
+        | serenity::GatewayIntents::GUILD_MEMBERS
+        | serenity::GatewayIntents::GUILD_PRESENCES;
+
+    let token = var("JAMEBOT_TOKEN").expect("JAMEBOT_TOKEN is not set.");
+
+    let mut client = serenity::Client::builder(token, intents)
+        .framework(framework)
         .await
         .unwrap();
 
-
+    client.start().await.unwrap();
 }

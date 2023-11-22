@@ -53,21 +53,14 @@ pub async fn hug(
     ctx: Context<'_>,
     #[description = "The user to hug!! :3"] user: serenity::User,
 ) -> Result<(), Error> {
-
     let hug = {
         let mut rng = thread_rng();
         format!("{}", HUGS.choose(&mut rng).unwrap())
     };
 
-
-    ctx.send(|e| {
-        e.embed(|e|
-            e.title(format!("{} hugged {}!", ctx.author().name, user.name))
-            .image(&hug)
-            // maybe add the author thing later
-        )
-    })
-    .await?;
+    let title = format!("{} hugged {}!", ctx.author().name, user.name);
+    let embed = serenity::CreateEmbed::default().title(title).image(&hug);
+    ctx.send(poise::CreateReply::default().embed(embed)).await?;
 
     Ok(())
 }

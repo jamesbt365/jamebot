@@ -1,8 +1,14 @@
-use rand::{prelude::Distribution, thread_rng};
 use crate::{Context, Error};
+use poise::serenity_prelude as serenity;
+use rand::{prelude::Distribution, thread_rng};
 
 /// Roll some dice
-#[poise::command(prefix_command, slash_command, category = "Utility", user_cooldown="5")]
+#[poise::command(
+    prefix_command,
+    slash_command,
+    category = "Utility",
+    user_cooldown = "5"
+)]
 pub async fn roll(
     ctx: Context<'_>,
     #[description = "Die size"] die_size: Option<u32>,
@@ -20,14 +26,12 @@ pub async fn roll(
             .sum()
     };
 
-    ctx.send(|e| {
-        e.embed(|e|
-            e.description(format!(
-                "Rolling {}d{} for **{}**! :game_die:",
-                die_size, die_count, roll
-            ))
-        )
-    })
+    ctx.send(
+        poise::CreateReply::default().embed(serenity::CreateEmbed::default().description(format!(
+            "Rolling {}d{} for **{}**! :game_die:",
+            die_size, die_count, roll
+        ))),
+    )
     .await?;
 
     Ok(())

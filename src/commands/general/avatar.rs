@@ -1,3 +1,5 @@
+use std::num::NonZeroU16;
+
 use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 
@@ -7,14 +9,16 @@ pub async fn avatar(
     ctx: Context<'_>,
     #[description = "The user's avatar to display"] user: serenity::User,
 ) -> Result<(), Error> {
-
-    ctx.send(|e| {
-        e.embed(|e|
-            e.title(format!("{}#{}'s avatar:", user.name, user.discriminator))
-            .image(user.face())
-        )
-    })
-    .await?;
+    // improve later.
+    let title = format!(
+        "{}#{}'s avatar:",
+        user.name,
+        user.discriminator.unwrap_or(NonZeroU16::new(1).unwrap())
+    );
+    let embed = serenity::CreateEmbed::default()
+        .title(title)
+        .image(user.face());
+    ctx.send(poise::CreateReply::default().embed(embed)).await?;
 
     Ok(())
 }

@@ -1,6 +1,5 @@
 use crate::{Context, Error};
 
-
 // Post the link to the bots source code.
 #[poise::command(slash_command, prefix_command, category = "Meta")]
 pub async fn source(ctx: Context<'_>) -> Result<(), Error> {
@@ -11,9 +10,10 @@ pub async fn source(ctx: Context<'_>) -> Result<(), Error> {
 /// Shutdown the bot gracefully.
 #[poise::command(prefix_command, owners_only, hide_in_help)]
 pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
-    ctx.say("**Bailing out, you are on your own. Good luck.**").await?;
-    ctx.framework().shard_manager().lock().await.shutdown_all().await;
-        Ok(())
+    ctx.say("**Bailing out, you are on your own. Good luck.**")
+        .await?;
+    ctx.framework().shard_manager().shutdown_all().await;
+    Ok(())
 }
 
 /// Displays JameBot's uptime
@@ -46,7 +46,6 @@ pub async fn help(
     #[autocomplete = "poise::builtins::autocomplete_command"]
     command: Option<String>,
 ) -> Result<(), Error> {
-
     poise::builtins::help(
         ctx,
         command.as_deref(),
