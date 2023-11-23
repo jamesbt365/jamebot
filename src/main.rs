@@ -29,7 +29,7 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
     match error {
         poise::FrameworkError::Setup { error, .. } => panic!("Failed to start bot: {:?}", error),
         poise::FrameworkError::Command { error, ctx, .. } => {
-            println!("Error in command `{}`: {:?}", ctx.command().name, error,);
+            println!("Error in command `{}`: {:?}", ctx.command().name, error);
         }
         error => {
             if let Err(e) = poise::builtins::on_error(error).await {
@@ -68,6 +68,8 @@ async fn main() {
             meta::uptime(),
             meta::help(),
             fun::hug::hug(),
+            guild_config::configuration::settings(),
+            guild_config::configuration::change_settings(),
             utility::roll::roll(),
             general::avatar::avatar(),
             utility::colour::hex(),
@@ -86,8 +88,7 @@ async fn main() {
                                 // No guild config, add one and use default config.
                                 // Maybe do a check for the guild first, then do it.
                                 let config = config::add_guild_config_def(ctx.data, guild_id).await;
-                                // gonna do a lazy unwrap here because I'm not sure how I would actually want to handle a problem.
-                                config.unwrap().prefix
+                                config.prefix
                             };
                             Ok(prefix)
                         }
@@ -135,6 +136,7 @@ async fn main() {
         })
     });
 
+    // eventually only use the intents I need.
     let intents = serenity::GatewayIntents::non_privileged()
         | serenity::GatewayIntents::MESSAGE_CONTENT
         | serenity::GatewayIntents::GUILD_MEMBERS
