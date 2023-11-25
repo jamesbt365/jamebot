@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO guilds (guild_id, prefix, media_del_save, media_save_total_limit, media_save_limit) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (guild_id) DO UPDATE SET prefix = $2, media_del_save = $3, media_save_total_limit = $4, media_save_limit = $5",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Bool",
+        "Int4",
+        "Int2"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "5489b2b7c64909e36eeb1c56c221d7d159f67261d3c0cb0f0ecc1acd8eb4e655"
+}

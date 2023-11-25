@@ -6,12 +6,40 @@ use crate::Data;
 #[derive(Clone, Debug, Deserialize)]
 pub struct GuildConfig {
     pub prefix: Option<String>,
+    pub modules: ModuleConfig,
 }
+
+#[derive(Clone, Debug, Deserialize)]
+pub struct ModuleConfig {
+    pub mod_config: Moderation,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+pub struct Moderation {
+    pub media_del_save: bool,
+    pub media_save_total_limit: Option<i32>,
+    pub media_save_limit: Option<i16>,
+}
+
+impl ModuleConfig {
+    pub fn new() -> Self {
+        ModuleConfig {
+            mod_config: Moderation {
+                media_del_save: false,
+                media_save_total_limit: None,
+                media_save_limit: None,
+            }
+        }
+    }
+}
+
+
 
 impl GuildConfig {
     pub fn new(prefix: Option<String>) -> Self {
         GuildConfig {
             prefix: prefix.or(Some("-".to_string())),
+            modules: ModuleConfig::new()
         }
     }
 
@@ -28,6 +56,12 @@ impl Default for GuildConfig {
     }
 }
 
+impl Default for ModuleConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub async fn add_guild_config_def(data: &Data, guild_id: GuildId) -> GuildConfig {
     let guild_cache = &data.guild_cache;
     let database = &data.database;
@@ -37,9 +71,12 @@ pub async fn add_guild_config_def(data: &Data, guild_id: GuildId) -> GuildConfig
     guild_cache.insert(guild_id, guild_config.clone());
 
     let _ = sqlx::query!(
-        "INSERT INTO guilds (guild_id, prefix) VALUES ($1, $2) ON CONFLICT (guild_id) DO UPDATE SET prefix = $2",
+        "INSERT INTO guilds (guild_id, prefix, media_del_save, media_save_total_limit, media_save_limit) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (guild_id) DO UPDATE SET prefix = $2, media_del_save = $3, media_save_total_limit = $4, media_save_limit = $5",
         i64::from(guild_id),
         guild_config.prefix,
+        guild_config.modules.mod_config.media_del_save,
+        guild_config.modules.mod_config.media_save_total_limit,
+        guild_config.modules.mod_config.media_save_limit,
     )
     .execute(database)
     .await;
@@ -93,9 +130,12 @@ pub async fn update_guild_config(data: &Data, guild_id: GuildId, new_config: Gui
     guild_cache.insert(guild_id, new_config.clone());
 
     let _ = sqlx::query!(
-        "INSERT INTO guilds (guild_id, prefix) VALUES ($1, $2) ON CONFLICT (guild_id) DO UPDATE SET prefix = $2",
+        "INSERT INTO guilds (guild_id, prefix, media_del_save, media_save_total_limit, media_save_limit) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (guild_id) DO UPDATE SET prefix = $2, media_del_save = $3, media_save_total_limit = $4, media_save_limit = $5",
         i64::from(guild_id),
         new_config.prefix,
+        new_config.modules.mod_config.media_del_save,
+        new_config.modules.mod_config.media_save_total_limit,
+        new_config.modules.mod_config.media_save_limit,
     )
     .execute(database)
     .await;
