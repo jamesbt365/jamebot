@@ -83,6 +83,20 @@ pub async fn event_handler(
                 }
             }
         }
+        serenity::FullEvent::GuildCreate {
+            ctx,
+            guild,
+            is_new: Some(new),
+        } => {
+            if new {
+                config::cache_guild_config(data, guild.id).await;
+            }
+        }
+        serenity::FullEvent::GuildDelete { ctx: _, incomplete, full: _ } => {
+            if !incomplete.unavailable {
+                config::drop_guild_cache(data, incomplete.id).await;
+            }
+        }
 
         _ => (),
     }

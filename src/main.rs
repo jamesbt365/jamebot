@@ -86,8 +86,7 @@ async fn main() {
                                 config.prefix.clone()
                             } else {
                                 // No guild config, add one and use default config.
-                                // Maybe do a check for the guild first, then do it.
-                                let config = config::add_guild_config_def(ctx.data, guild_id).await;
+                                let config = config::cache_guild_config(ctx.data, guild_id).await;
                                 config.prefix
                             };
                             Ok(prefix)

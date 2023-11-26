@@ -28,18 +28,16 @@ impl ModuleConfig {
                 media_del_save: false,
                 media_save_total_limit: None,
                 media_save_limit: None,
-            }
+            },
         }
     }
 }
-
-
 
 impl GuildConfig {
     pub fn new(prefix: Option<String>) -> Self {
         GuildConfig {
             prefix: prefix.or(Some("-".to_string())),
-            modules: ModuleConfig::new()
+            modules: ModuleConfig::new(),
         }
     }
 
@@ -113,6 +111,13 @@ pub async fn cache_guild_config(data: &Data, guild_id: GuildId) -> GuildConfig {
         },
     }
 }
+
+pub async fn drop_guild_cache(data: &Data, guild_id: GuildId) {
+    let guild_cache = &data.guild_cache;
+    guild_cache.remove(&guild_id);
+}
+
+
 
 pub async fn get_guild_config(data: &Data, guild_id: GuildId) -> Option<GuildConfig> {
     let guild_cache = &data.guild_cache;
