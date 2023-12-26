@@ -30,7 +30,7 @@ impl Data {
 
         // Write to postgres for persistent storage.
         if config != GuildConfig::default() {
-
+            self._insert_guild(id, config).await
         }
     }
 
@@ -53,7 +53,7 @@ impl Data {
             i64::from(id),
             config.prefix
         )
-        .execute(&self.database)
+    .execute(&self.database)
         .await;
     }
 

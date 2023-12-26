@@ -4,7 +4,6 @@ mod event_handler;
 mod data;
 use data::*;
 mod config;
-use config::GuildConfig;
 use poise::serenity_prelude::{self as serenity};
 use std::{env::var, time::Duration};
 

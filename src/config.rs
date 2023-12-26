@@ -1,7 +1,4 @@
 use serde::Deserialize;
-use serenity::all::GuildId;
-
-use crate::Data;
 
 #[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct GuildConfig {
@@ -72,23 +69,4 @@ impl Default for ModuleConfig {
     fn default() -> Self {
         Self::new()
     }
-}
-
-pub async fn add_guild_config_def(data: &Data, guild_id: GuildId) -> GuildConfig {
-    let guild_cache = &data.guild_cache;
-    let database = &data.database;
-
-    let guild_config = GuildConfig::default();
-
-    guild_cache.insert(guild_id, guild_config.clone());
-
-    let _ = sqlx::query!(
-        "INSERT INTO guilds (guild_id, prefix) VALUES ($1, $2) ON CONFLICT (guild_id) DO UPDATE SET prefix = $2",
-        i64::from(guild_id),
-        guild_config.prefix
-    )
-    .execute(database)
-    .await;
-
-    guild_config
 }
