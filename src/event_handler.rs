@@ -1,66 +1,13 @@
 use crate::{config, Data, Error, GuildConfig};
-use poise::serenity_prelude::{self as serenity, EmojiId, ReactionType};
-use std::collections::HashMap;
+use poise::serenity_prelude as serenity;
 
 pub async fn event_handler(
     event: serenity::FullEvent,
     _framework: poise::FrameworkContext<'_, Data, Error>,
     data: &Data,
 ) -> Result<(), Error> {
-    let keyword_reactions: HashMap<&str, ReactionType> = {
-        let mut map = HashMap::new();
-        map.insert(
-            "lolicamera",
-            ReactionType::Custom {
-                animated: false,
-                id: EmojiId::new(916511786159718460),
-                name: Some("lolicamera".to_string()),
-            },
-        );
-        map.insert(
-            "fag",
-            ReactionType::Custom {
-                animated: false,
-                id: EmojiId::new(1028326126008930374),
-                name: Some("fag".to_string()),
-            },
-        );
-        map.insert(
-            "morbius",
-            ReactionType::Custom {
-                animated: false,
-                id: EmojiId::new(1028320732649893888),
-                name: Some("morbius".to_string()),
-            },
-        );
-        let bitlink = ReactionType::Custom {
-            animated: false,
-            id: EmojiId::new(901179398093422643),
-            name: Some("32bitlink".to_string()),
-        };
-        map.insert("32bitlink", bitlink.clone());
-        map.insert("32 bit link", bitlink.clone());
-
-        let rimokon = ReactionType::Custom {
-            animated: false,
-            id: EmojiId::new(1069331591953911848),
-            name: Some("rimokon".to_string()),
-        };
-        map.insert("rimokon", rimokon.clone());
-        map.insert("remote", rimokon.clone());
-        map.insert("control", rimokon.clone());
-        map.insert("sit down please yeah", rimokon.clone());
-        map
-    };
     match event {
-        serenity::FullEvent::Message { ctx, new_message } => {
-            let content_lowercase = new_message.content.to_lowercase();
-            for (keyword, reaction) in keyword_reactions.iter() {
-                if content_lowercase.contains(keyword) {
-                    new_message.react(&ctx, reaction.clone()).await?;
-                }
-            }
-        }
+        // Eventually just do this all in GuildCreate and check on message, its generally the easiest method.
         serenity::FullEvent::CacheReady { ctx: _, guilds } => {
             let guild_cache = &data.guild_cache;
             let database = &data.database;
@@ -84,7 +31,7 @@ pub async fn event_handler(
             }
         }
         serenity::FullEvent::GuildCreate {
-            ctx,
+            ctx: _,
             guild,
             is_new: Some(new),
         } => {

@@ -18,6 +18,7 @@ pub struct Data {
     time_started: std::time::Instant,
 }
 
+
 #[poise::command(prefix_command, hide_in_help)]
 async fn register(ctx: Context<'_>) -> Result<(), Error> {
     poise::builtins::register_application_commands_buttons(ctx).await?;
@@ -103,18 +104,6 @@ async fn main() {
         },
 
         on_error: |error| Box::pin(on_error(error)),
-
-        pre_command: |ctx| {
-            Box::pin(async move {
-                println!("Executing command {}...", ctx.command().qualified_name);
-            })
-        },
-
-        post_command: |ctx| {
-            Box::pin(async move {
-                println!("Executed command {}!", ctx.command().qualified_name);
-            })
-        },
 
         skip_checks_for_owners: false,
         event_handler: |event: &serenity::FullEvent, framework, data| {

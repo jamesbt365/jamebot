@@ -16,18 +16,32 @@ pub struct ModuleConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Moderation {
-    pub media_del_save: bool,
-    pub media_save_total_limit: Option<i32>,
-    pub media_save_limit: Option<i16>,
+    pub enabled: bool,
+    pub elevation_settings: ElevationSettings
 }
+
+
+// TODO:
+// Allow higher settings - if depending on user (role? (provided disallow of the role that allows it)), self protect?
+// elevation limit (what position is max)
+// max elevation time
+// cooldown per executer, executee
+// allow multiple applications at once?
+// Safeguarding settings to prevent infinite execution
+#[derive(Clone, Debug, Deserialize)]
+pub struct ElevationSettings {
+    pub enabled: bool,
+}
+
 
 impl ModuleConfig {
     pub fn new() -> Self {
         ModuleConfig {
             mod_config: Moderation {
-                media_del_save: false,
-                media_save_total_limit: None,
-                media_save_limit: None,
+                enabled: false,
+                elevation_settings: ElevationSettings {
+                    enabled: false,
+                }
             },
         }
     }
@@ -69,12 +83,9 @@ pub async fn add_guild_config_def(data: &Data, guild_id: GuildId) -> GuildConfig
     guild_cache.insert(guild_id, guild_config.clone());
 
     let _ = sqlx::query!(
-        "INSERT INTO guilds (guild_id, prefix, media_del_save, media_save_total_limit, media_save_limit) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (guild_id) DO UPDATE SET prefix = $2, media_del_save = $3, media_save_total_limit = $4, media_save_limit = $5",
+        "INSERT INTO guilds (guild_id, prefix) VALUES ($1, $2) ON CONFLICT (guild_id) DO UPDATE SET prefix = $2",
         i64::from(guild_id),
-        guild_config.prefix,
-        guild_config.modules.mod_config.media_del_save,
-        guild_config.modules.mod_config.media_save_total_limit,
-        guild_config.modules.mod_config.media_save_limit,
+        guild_config.prefix
     )
     .execute(database)
     .await;
@@ -113,6 +124,7 @@ pub async fn cache_guild_config(data: &Data, guild_id: GuildId) -> GuildConfig {
 }
 
 pub async fn drop_guild_cache(data: &Data, guild_id: GuildId) {
+    // Maybe add extra stuff to remove from database.
     let guild_cache = &data.guild_cache;
     guild_cache.remove(&guild_id);
 }
@@ -135,12 +147,9 @@ pub async fn update_guild_config(data: &Data, guild_id: GuildId, new_config: Gui
     guild_cache.insert(guild_id, new_config.clone());
 
     let _ = sqlx::query!(
-        "INSERT INTO guilds (guild_id, prefix, media_del_save, media_save_total_limit, media_save_limit) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (guild_id) DO UPDATE SET prefix = $2, media_del_save = $3, media_save_total_limit = $4, media_save_limit = $5",
+        "INSERT INTO guilds (guild_id, prefix) VALUES ($1, $2) ON CONFLICT (guild_id) DO UPDATE SET prefix = $2",
         i64::from(guild_id),
         new_config.prefix,
-        new_config.modules.mod_config.media_del_save,
-        new_config.modules.mod_config.media_save_total_limit,
-        new_config.modules.mod_config.media_save_limit,
     )
     .execute(database)
     .await;

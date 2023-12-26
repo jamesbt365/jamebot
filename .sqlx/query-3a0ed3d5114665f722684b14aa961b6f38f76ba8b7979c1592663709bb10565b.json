@@ -12,21 +12,6 @@
         "ordinal": 1,
         "name": "prefix",
         "type_info": "Text"
-      },
-      {
-        "ordinal": 2,
-        "name": "media_del_save",
-        "type_info": "Bool"
-      },
-      {
-        "ordinal": 3,
-        "name": "media_save_total_limit",
-        "type_info": "Int4"
-      },
-      {
-        "ordinal": 4,
-        "name": "media_save_limit",
-        "type_info": "Int2"
       }
     ],
     "parameters": {
@@ -36,9 +21,6 @@
     },
     "nullable": [
       false,
-      true,
-      true,
-      true,
       true
     ]
   },
