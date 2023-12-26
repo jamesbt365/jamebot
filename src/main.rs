@@ -1,22 +1,15 @@
 mod commands;
 use commands::*;
-mod config;
 mod event_handler;
-
+mod data;
+use data::*;
+mod config;
 use config::GuildConfig;
-use poise::serenity_prelude::{self as serenity, GuildId};
+use poise::serenity_prelude::{self as serenity};
 use std::{env::var, time::Duration};
 
-type Error = Box<dyn std::error::Error + Send + Sync>;
-type Context<'a> = poise::Context<'a, Data, Error>;
+use sqlx::postgres::PgPoolOptions;
 
-use sqlx::{postgres::PgPoolOptions, PgPool};
-
-pub struct Data {
-    database: PgPool,
-    guild_cache: DashMap<GuildId, GuildConfig>,
-    time_started: std::time::Instant,
-}
 
 
 #[poise::command(prefix_command, hide_in_help)]
@@ -81,16 +74,7 @@ async fn main() {
                 Box::pin(async move {
                     match ctx.guild_id {
                         Some(guild_id) => {
-                            // generate guild config from
-                            let guild_config = ctx.data.guild_cache.get(&guild_id);
-                            let prefix = if let Some(config) = guild_config {
-                                config.prefix.clone()
-                            } else {
-                                // No guild config, add one and use default config.
-                                let config = config::cache_guild_config(ctx.data, guild_id).await;
-                                config.prefix
-                            };
-                            Ok(prefix)
+                            Ok(ctx.data.get_guild(guild_id).await.prefix)
                         }
                         None => {
                             // No guild, use default prefix.

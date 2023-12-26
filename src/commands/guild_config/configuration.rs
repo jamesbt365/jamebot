@@ -1,7 +1,6 @@
 use std::time::Duration;
 
-use crate::config::{cache_guild_config, update_guild_config};
-use crate::{config::get_guild_config, Context, Error};
+use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 
 /// Manage the Server Configuration!
@@ -13,15 +12,10 @@ use poise::serenity_prelude as serenity;
     guild_only
 )]
 pub async fn settings(ctx: Context<'_>) -> Result<(), Error> {
-    let guild_config = get_guild_config(ctx.data(), ctx.guild_id().unwrap()).await;
+    let guild_config = ctx.data().get_guild(ctx.guild_id().unwrap()).await;
 
-    let gconfig = if let Some(config) = guild_config {
-        config
-    } else {
-        cache_guild_config(ctx.data(), ctx.guild_id().unwrap()).await
-    };
 
-    let prefix_str = if let Some(prefix) = gconfig.prefix {
+    let prefix_str = if let Some(prefix) = guild_config.prefix {
         format!("`{}`", prefix)
     } else {
         "None".to_string()
@@ -46,21 +40,14 @@ pub async fn settings(ctx: Context<'_>) -> Result<(), Error> {
     guild_only
 )]
 pub async fn change_settings(ctx: Context<'_>) -> Result<(), Error> {
-    let guild_config = get_guild_config(ctx.data(), ctx.guild_id().unwrap()).await;
+    let guild_id = ctx.guild_id().unwrap();
+    let guild_config = ctx.data().get_guild(guild_id).await;
 
-    let gconfig = if let Some(config) = guild_config {
-        config
-    } else {
-        cache_guild_config(ctx.data(), ctx.guild_id().unwrap()).await
-    };
-
-    let prefix_str = if let Some(prefix) = gconfig.clone().prefix {
+    let prefix_str = if let Some(prefix) = guild_config.clone().prefix {
         format!("`{}`", prefix)
     } else {
         "None".to_string()
     };
-
-    // eventually allow to specify specific piece to edit.
 
     let embed = serenity::CreateEmbed::default()
         .title("Guild Settings")
@@ -94,8 +81,8 @@ pub async fn change_settings(ctx: Context<'_>) -> Result<(), Error> {
                 let prefix_str = format!("`{}`", data.input.clone());
                 // should validate it.
 
-                let new_conf = gconfig.clone().prefix(Some(data.input));
-                update_guild_config(ctx.data(), ctx.guild_id().unwrap(), new_conf).await;
+                let new_conf = guild_config.clone().prefix(Some(data.input));
+                ctx.data().save_guild(guild_id, new_conf).await;
 
                 let embed = serenity::CreateEmbed::default()
                     .title("Guild Settings")
