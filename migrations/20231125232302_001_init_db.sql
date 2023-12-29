@@ -3,5 +3,6 @@
 CREATE TABLE guilds (
     guild_id bigint PRIMARY KEY,
     prefix text
+
 );
 

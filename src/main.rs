@@ -61,6 +61,7 @@ async fn main() {
             meta::uptime(),
             meta::help(),
             fun::hug::hug(),
+            moderation::elevate::elevate(),
             guild_config::configuration::settings(),
             guild_config::configuration::change_settings(),
             utility::roll::roll(),
