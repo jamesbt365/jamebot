@@ -1,17 +1,9 @@
 [package]
-name = "jamebot"
+name = "jamebot_data"
 version = "0.1.0"
 edition = "2021"
 
-[workspace]
-members = [
-    "jamebot_data"
-]
-
-
 [dependencies]
-jamebot_data = { path = "jamebot_data" }
-
 serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next"}
 poise = { git = "https://github.com/serenity-rs/poise", branch = "serenity-next"} # matches serenity.
 tokio = { version = "1.29.1", features = ["macros", "signal", "rt-multi-thread"] }

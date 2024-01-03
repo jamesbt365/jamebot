@@ -1,15 +1,12 @@
 mod commands;
 use commands::*;
 mod event_handler;
-mod data;
-use data::*;
-mod config;
 use poise::serenity_prelude::{self as serenity};
-use std::{env::var, time::Duration};
+use std::{env::var, sync::Arc, time::Duration};
+
+use jamebot_data::{Context, Data, Error, DataInner};
 
 use sqlx::postgres::PgPoolOptions;
-
-
 
 #[poise::command(prefix_command, hide_in_help)]
 async fn register(ctx: Context<'_>) -> Result<(), Error> {
@@ -61,7 +58,6 @@ async fn main() {
             meta::uptime(),
             meta::help(),
             fun::hug::hug(),
-            moderation::elevate::elevate(),
             guild_config::configuration::settings(),
             guild_config::configuration::change_settings(),
             utility::roll::roll(),
@@ -73,9 +69,7 @@ async fn main() {
             dynamic_prefix: Some(|ctx| {
                 Box::pin(async move {
                     match ctx.guild_id {
-                        Some(guild_id) => {
-                            Ok(ctx.data.get_guild(guild_id).await.prefix)
-                        }
+                        Some(guild_id) => Ok(ctx.data.get_guild(guild_id).await.prefix),
                         None => {
                             // No guild, use default prefix.
                             Ok(Some(String::from("-")))
@@ -100,11 +94,11 @@ async fn main() {
         Box::pin(async move {
             println!("Logged in as {}", ready.user.name);
             poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-            Ok(Data {
+            Ok(Data(Arc::new(DataInner {
                 database,
-                guild_cache: DashMap::new(),
+                guild_co: DashMap::new(),
                 time_started: std::time::Instant::now(),
-            })
+            })))
         })
     });
 

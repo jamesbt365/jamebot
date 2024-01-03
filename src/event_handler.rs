@@ -13,9 +13,13 @@ pub async fn event_handler(
                 data.get_guild(guild).await;
             }
         }
-        serenity::FullEvent::GuildDelete { ctx: _, incomplete, full: _ } => {
+        serenity::FullEvent::GuildDelete {
+            ctx: _,
+            incomplete,
+            full: _,
+        } => {
             if !incomplete.unavailable {
-                data.drop_guild_cache(incomplete.id);
+                data.drop_guild_caches(incomplete.id);
             }
         }
 

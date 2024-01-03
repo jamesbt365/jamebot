@@ -6,3 +6,7 @@ CREATE TABLE guilds (
 
 );
 
+CREATE TABLE guild_data (
+    guild_id INT PRIMARY KEY,
+    elevation_info jsob
+);

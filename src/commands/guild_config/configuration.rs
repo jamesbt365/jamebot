@@ -14,7 +14,6 @@ use poise::serenity_prelude as serenity;
 pub async fn settings(ctx: Context<'_>) -> Result<(), Error> {
     let guild_config = ctx.data().get_guild(ctx.guild_id().unwrap()).await;
 
-
     let prefix_str = if let Some(prefix) = guild_config.prefix {
         format!("`{}`", prefix)
     } else {

@@ -7,10 +7,7 @@ pub async fn avatar(
     ctx: Context<'_>,
     #[description = "The user's avatar to display"] user: serenity::User,
 ) -> Result<(), Error> {
-    let title = format!(
-        "{}'s avatar:",
-        user.tag()
-    );
+    let title = format!("{}'s avatar:", user.tag());
     let embed = serenity::CreateEmbed::default()
         .title(title)
         .image(user.face());
