@@ -1,34 +1,35 @@
-use std::sync::Arc;
-
 use dashmap::DashMap;
 use serenity::all::GuildId;
 use sqlx::PgPool;
+pub mod databases;
 
 mod structs;
 use structs::*;
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
 pub type Context<'a> = poise::Context<'a, Data, Error>;
+pub type PartialContext<'a> = poise::PartialContext<'a, Data, Error>;
+pub type Command = poise::Command<Data, Error>;
 
 
-#[derive(Clone)]
-pub struct Data(pub Arc<DataInner>);
-
-impl std::ops::Deref for Data {
-    type Target = DataInner;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-pub struct DataInner {
+pub struct Data {
     pub database: PgPool,
     pub guild_co: DashMap<GuildId, GuildConfig>,
     pub time_started: std::time::Instant,
 }
 
 impl Data {
+    pub async fn new() -> Self {
+
+        let database = databases::init_data().await;
+
+        Data {
+            database,
+            guild_co: DashMap::new(),
+            time_started: std::time::Instant::now(),
+        }
+    }
+
     pub async fn get_guild(&self, id: GuildId) -> GuildConfig {
         if let Some(cached_conf) = self.guild_co.get(&id) {
             cached_conf.clone()

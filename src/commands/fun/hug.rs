@@ -55,7 +55,7 @@ pub async fn hug(
 ) -> Result<(), Error> {
     let hug = {
         let mut rng = thread_rng();
-        format!("{}", HUGS.choose(&mut rng).unwrap())
+        HUGS.choose(&mut rng).unwrap().to_string()
     };
 
     let title = format!("{} hugged {}!", ctx.author().name, user.name);

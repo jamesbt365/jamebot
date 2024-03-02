@@ -1,20 +1,21 @@
 use crate::{Data, Error};
-use poise::serenity_prelude as serenity;
+use poise::serenity_prelude::{self as serenity, FullEvent};
+
 
 pub async fn event_handler(
-    event: serenity::FullEvent,
-    _framework: poise::FrameworkContext<'_, Data, Error>,
-    data: &Data,
+    framework: poise::FrameworkContext<'_, Data, Error>,
+    event: &serenity::FullEvent,
 ) -> Result<(), Error> {
+    let data = framework.user_data();
+    let ctx = framework.serenity_context;
     match event {
         // Eventually just do this all in GuildCreate and check on message, its generally the easiest method.
-        serenity::FullEvent::CacheReady { ctx: _, guilds } => {
+        FullEvent::CacheReady {guilds } => {
             for guild in guilds {
-                data.get_guild(guild).await;
+                data.get_guild(*guild).await;
             }
         }
-        serenity::FullEvent::GuildDelete {
-            ctx: _,
+        FullEvent::GuildDelete {
             incomplete,
             full: _,
         } => {
