@@ -6,7 +6,6 @@ pub async fn event_handler(
     event: &serenity::FullEvent,
 ) -> Result<(), Error> {
     let data = framework.user_data();
-    let ctx = framework.serenity_context;
     match event {
         // Eventually just do this all in GuildCreate and check on message, its generally the easiest method.
         FullEvent::CacheReady { guilds } => {
