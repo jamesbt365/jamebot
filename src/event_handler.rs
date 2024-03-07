@@ -1,7 +1,6 @@
 use crate::{Data, Error};
 use poise::serenity_prelude::{self as serenity, FullEvent};
 
-
 pub async fn event_handler(
     framework: poise::FrameworkContext<'_, Data, Error>,
     event: &serenity::FullEvent,
@@ -10,7 +9,7 @@ pub async fn event_handler(
     let ctx = framework.serenity_context;
     match event {
         // Eventually just do this all in GuildCreate and check on message, its generally the easiest method.
-        FullEvent::CacheReady {guilds } => {
+        FullEvent::CacheReady { guilds } => {
             for guild in guilds {
                 data.get_guild(*guild).await;
             }

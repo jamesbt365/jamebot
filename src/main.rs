@@ -1,7 +1,10 @@
+#![warn(clippy::pedantic)]
+#![allow(clippy::wildcard_imports)]
+
 mod commands;
 use commands::*;
 mod event_handler;
-use poise::{serenity_prelude as serenity};
+use poise::serenity_prelude as serenity;
 use std::{env::var, sync::Arc, time::Duration};
 
 use jamebot_data::{Context, Data, Error};
@@ -22,13 +25,15 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
         }
         error => {
             if let Err(e) = poise::builtins::on_error(error).await {
-                println!("Error while handling error: {}", e)
+                println!("Error while handling error: {e}");
             }
         }
     }
 }
 
-async fn get_prefix(ctx: jamebot_data::PartialContext<'_>) -> Result<Option<Cow<'static, str>>, Error> {
+async fn get_prefix(
+    ctx: jamebot_data::PartialContext<'_>,
+) -> Result<Option<Cow<'static, str>>, Error> {
     // If not in a guild, return the default prefix.
     let Some(guild_id) = ctx.guild_id else {
         return Ok(Some(Cow::Borrowed("-")));
@@ -49,13 +54,10 @@ async fn get_prefix(ctx: jamebot_data::PartialContext<'_>) -> Result<Option<Cow<
     } else {
         Ok(Some(Cow::Borrowed("-")))
     }
-
-
 }
 
 #[tokio::main]
 async fn main() {
-
     let options = poise::FrameworkOptions {
         commands: vec![
             register(),
@@ -70,7 +72,9 @@ async fn main() {
         ],
         prefix_options: poise::PrefixFrameworkOptions {
             dynamic_prefix: Some(|ctx| Box::pin(get_prefix(ctx))),
-            edit_tracker: Some(Arc::new(poise::EditTracker::for_timespan(Duration::from_secs(3600)))),
+            edit_tracker: Some(Arc::new(poise::EditTracker::for_timespan(
+                Duration::from_secs(3600),
+            ))),
             ..Default::default()
         },
 
@@ -93,6 +97,7 @@ async fn main() {
 
     let mut client = serenity::Client::builder(&token, intents)
         .framework(framework)
+        .data(Data::new().await)
         .await
         .unwrap();
 

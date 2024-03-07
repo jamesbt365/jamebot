@@ -19,7 +19,7 @@ pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
 /// Displays JameBot's uptime
 #[poise::command(slash_command, prefix_command, category = "Meta")]
 pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
-    let uptime = std::time::Instant::now() - ctx.data().time_started;
+    let uptime = ctx.data().time_started.elapsed();
 
     let calculation = |a, b| (a / b, a % b);
 
@@ -28,11 +28,8 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
     let (hours, minutes) = calculation(minutes, 60);
     let (days, hours) = calculation(hours, 24);
 
-    ctx.say(format!(
-        "`Uptime: {}d {}h {}m {}s`",
-        days, hours, minutes, seconds
-    ))
-    .await?;
+    ctx.say(format!("`Uptime: {days}d {hours}h {minutes}m {seconds}s`"))
+        .await?;
 
     Ok(())
 }

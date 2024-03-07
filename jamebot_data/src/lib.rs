@@ -1,6 +1,8 @@
 use dashmap::DashMap;
 use serenity::all::GuildId;
 use sqlx::PgPool;
+use std::sync::Arc;
+
 pub mod databases;
 
 mod structs;
@@ -11,7 +13,6 @@ pub type Context<'a> = poise::Context<'a, Data, Error>;
 pub type PartialContext<'a> = poise::PartialContext<'a, Data, Error>;
 pub type Command = poise::Command<Data, Error>;
 
-
 pub struct Data {
     pub database: PgPool,
     pub guild_co: DashMap<GuildId, GuildConfig>,
@@ -19,15 +20,14 @@ pub struct Data {
 }
 
 impl Data {
-    pub async fn new() -> Self {
-
+    pub async fn new() -> Arc<Self> {
         let database = databases::init_data().await;
 
-        Data {
+        Arc::new(Data {
             database,
             guild_co: DashMap::new(),
             time_started: std::time::Instant::now(),
-        }
+        })
     }
 
     pub async fn get_guild(&self, id: GuildId) -> GuildConfig {
