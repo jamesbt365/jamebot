@@ -12,7 +12,6 @@ pub async fn hex(
     ctx: Context<'_>,
     #[description = "Hex colour code"] colour: String,
 ) -> Result<(), Error> {
-
     let colour_img = if let Ok(rgba) = hex_to_rgba(&colour) {
         create_color_image(rgba)
     } else {
@@ -66,4 +65,9 @@ fn hex_to_rgba(hex_color: &str) -> Result<[u8; 4], Error> {
     let b = u8::from_str_radix(&normalized_hex_color[4..6], 16)?;
 
     Ok([r, g, b, 255]) // Set alpha to 255 (fully opaque)
+}
+
+#[must_use]
+pub fn commands() -> [crate::Command; 1] {
+    [hex()]
 }

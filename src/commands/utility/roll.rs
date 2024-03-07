@@ -7,7 +7,7 @@ use rand::{prelude::Distribution, thread_rng};
     prefix_command,
     slash_command,
     category = "Utility",
-    user_cooldown = "5"
+    member_cooldown = "5"
 )]
 pub async fn roll(
     ctx: Context<'_>,
@@ -16,14 +16,15 @@ pub async fn roll(
 ) -> Result<(), Error> {
     let die_size = die_size.unwrap_or(6);
     let die_count = die_count.unwrap_or(1);
-    // possible to add delimiter?
+    // TODO: seperate the slash and prefix command so i can parse the prefix one nicely.
 
     let roll: u64 = {
         let mut rng = thread_rng();
         let uniform = rand::distributions::Uniform::new_inclusive(1, die_size);
-        (0..die_count).map(|_| u64::from(uniform.sample(&mut rng))).sum()
+        (0..die_count)
+            .map(|_| u64::from(uniform.sample(&mut rng)))
+            .sum()
     };
-
 
     ctx.send(
         poise::CreateReply::default().embed(serenity::CreateEmbed::default().description(format!(
@@ -33,4 +34,9 @@ pub async fn roll(
     .await?;
 
     Ok(())
+}
+
+#[must_use]
+pub fn commands() -> [crate::Command; 1] {
+    [roll()]
 }

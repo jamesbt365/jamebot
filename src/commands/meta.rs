@@ -54,3 +54,15 @@ pub async fn help(
     .await?;
     Ok(())
 }
+
+#[poise::command(prefix_command, hide_in_help)]
+async fn register(ctx: Context<'_>) -> Result<(), Error> {
+    poise::builtins::register_application_commands_buttons(ctx).await?;
+
+    Ok(())
+}
+
+#[must_use]
+pub fn commands() -> [crate::Command; 5] {
+    [source(), shutdown(), uptime(), help(), register()]
+}

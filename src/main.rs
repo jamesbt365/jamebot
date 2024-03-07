@@ -7,16 +7,9 @@ mod event_handler;
 use poise::serenity_prelude as serenity;
 use std::{env::var, sync::Arc, time::Duration};
 
-use jamebot_data::{Context, Data, Error};
+use jamebot_data::{Command, Context, Data, Error};
 
 use std::borrow::Cow;
-
-#[poise::command(prefix_command, hide_in_help)]
-async fn register(ctx: Context<'_>) -> Result<(), Error> {
-    poise::builtins::register_application_commands_buttons(ctx).await?;
-
-    Ok(())
-}
 
 async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
     match error {
@@ -59,17 +52,7 @@ async fn get_prefix(
 #[tokio::main]
 async fn main() {
     let options = poise::FrameworkOptions {
-        commands: vec![
-            register(),
-            meta::source(),
-            meta::shutdown(),
-            meta::uptime(),
-            meta::help(),
-            fun::hug::hug(),
-            utility::roll::roll(),
-            general::avatar::avatar(),
-            utility::colour::hex(),
-        ],
+        commands: commands(),
         prefix_options: poise::PrefixFrameworkOptions {
             dynamic_prefix: Some(|ctx| Box::pin(get_prefix(ctx))),
             edit_tracker: Some(Arc::new(poise::EditTracker::for_timespan(
