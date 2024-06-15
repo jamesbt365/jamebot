@@ -6,6 +6,8 @@ use poise::serenity_prelude as serenity;
     prefix_command,
     slash_command,
     category = "Utility",
+    install_context = "Guild|User",
+    interaction_context = "Guild|BotDm|PrivateChannel",
     user_cooldown = "5"
 )]
 pub async fn hex(

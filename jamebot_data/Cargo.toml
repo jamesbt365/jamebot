@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next"}
-poise = { git = "https://github.com/serenity-rs/poise", branch = "serenity-next"} # matches serenity.
+poise = { workspace = true }
+serenity = { workspace = true }
 tokio = { version = "1.29.1", features = ["macros", "signal", "rt-multi-thread"] }
 sqlx = { version = "0.7.1", features = ["macros", "runtime-tokio-rustls", "postgres"] }
 rand = "0.8.5"

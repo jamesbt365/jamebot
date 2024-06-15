@@ -7,6 +7,8 @@ use rand::{prelude::Distribution, thread_rng};
     prefix_command,
     slash_command,
     category = "Utility",
+    install_context = "Guild|User",
+    interaction_context = "Guild|BotDm|PrivateChannel",
     member_cooldown = "5"
 )]
 pub async fn roll(
