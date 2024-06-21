@@ -14,7 +14,7 @@ jamebot_data = { path = "jamebot_data" }
 tokio = { version = "1.29.1", features = ["macros", "signal", "rt-multi-thread"] }
 sqlx = { version = "0.7.1", features = ["macros", "runtime-tokio-rustls", "postgres"] }
 rand = "0.8.5"
-reqwest = "0.11.18"
+reqwest = { version = "0.12", features = ["json"] }
 serde = "1.0.179"
 image = "0.24.7"
 dashmap = "5.5.3"
@@ -23,6 +23,7 @@ chrono = "0.4.31"
 
 poise = { workspace = true }
 serenity = { workspace = true }
+to-arraystring = "0.2.0"
 
 [workspace.dependencies.serenity]
 git = "https://github.com/serenity-rs/serenity"

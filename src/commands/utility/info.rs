@@ -17,6 +17,8 @@ fn bool_converter(b: bool) -> String {
     guild_only,
     category = "Utility",
     track_edits,
+    install_context = "Guild|User",
+    interaction_context = "Guild|BotDm|PrivateChannel",
     user_cooldown = "5"
 )]
 pub async fn roleinfo(

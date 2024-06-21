@@ -1,6 +1,7 @@
 pub mod colour;
 pub mod info;
 pub mod roll;
+pub mod urban;
 
 #[must_use]
 pub fn commands() -> Vec<crate::Command> {
@@ -9,6 +10,7 @@ pub fn commands() -> Vec<crate::Command> {
             .into_iter()
             .chain(roll::commands())
             .chain(info::commands())
+            .chain(urban::commands())
             .collect()
     }
 }
