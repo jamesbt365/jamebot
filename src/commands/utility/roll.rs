@@ -12,7 +12,7 @@ use rand::{prelude::Distribution, thread_rng};
 pub async fn roll(
     ctx: Context<'_>,
     #[description = "Die size"] die_size: Option<u32>,
-    #[description = "Die count"] die_count: Option<u32>,
+    #[description = "Die count"] die_count: Option<u8>,
 ) -> Result<(), Error> {
     let die_size = die_size.unwrap_or(6);
     let die_count = die_count.unwrap_or(1);

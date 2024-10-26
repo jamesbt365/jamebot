@@ -10,39 +10,51 @@ use poise::serenity_prelude as serenity;
 )]
 pub async fn hex(
     ctx: Context<'_>,
-    #[description = "Hex colour code"] colour: String,
+    #[description = "Space-separated hex colour codes"]
+    #[rest]
+    colours: String,
 ) -> Result<(), Error> {
-    let colour_img = if let Ok(rgba) = hex_to_rgba(&colour) {
-        create_color_image(rgba)
-    } else {
-        ctx.say("Could not parse colour!").await?;
-        return Ok(());
-    };
+    let colour_codes: Vec<&str> = colours
+        .split(|c| c == ' ' || c == ',')
+        .filter(|s| !s.is_empty())
+        .collect();
+
+    let block_width = 160;
+    let block_height = 160;
+
+    let image_width = block_width * colour_codes.len() as u32;
+    let image_height = block_height;
+
+    let mut combined_image = ImageBuffer::new(image_width, image_height);
+
+    for (i, colour) in colour_codes.iter().enumerate() {
+        if let Ok(rgba) = hex_to_rgba(colour) {
+            for x in 0..block_width {
+                for y in 0..block_height {
+                    combined_image.put_pixel(i as u32 * block_width + x, y, Rgba(rgba));
+                }
+            }
+        } else {
+            ctx.say(format!("Could not parse colour: {}", colour))
+                .await?;
+            return Ok(());
+        }
+    }
 
     let bytes = {
         let mut buffer = Vec::new();
         let mut cursor = std::io::Cursor::new(&mut buffer);
-        colour_img
+        DynamicImage::ImageRgba8(combined_image)
             .write_to(&mut cursor, image::ImageOutputFormat::Png)
             .unwrap();
         buffer
     };
 
-    let attachment = serenity::CreateAttachment::bytes(bytes, "colour.png");
+    let attachment = serenity::CreateAttachment::bytes(bytes, "combined_colour.png");
     ctx.send(poise::CreateReply::default().attachment(attachment))
         .await?;
 
     Ok(())
-}
-
-fn create_color_image(rgba: [u8; 4]) -> image::DynamicImage {
-    let mut img = ImageBuffer::new(160, 160);
-
-    for (_, _, pixel) in img.enumerate_pixels_mut() {
-        *pixel = Rgba(rgba);
-    }
-
-    DynamicImage::ImageRgba8(img)
 }
 
 fn hex_to_rgba(hex_color: &str) -> Result<[u8; 4], Error> {
