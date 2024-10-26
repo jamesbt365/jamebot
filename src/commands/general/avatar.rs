@@ -2,7 +2,13 @@ use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 
 /// Display a members avatar
-#[poise::command(prefix_command, slash_command, category = "General")]
+#[poise::command(
+    prefix_command,
+    slash_command,
+    install_context = "Guild|User",
+    interaction_context = "Guild|BotDm|PrivateChannel",
+    category = "General"
+)]
 pub async fn avatar(
     ctx: Context<'_>,
     #[description = "The user's avatar to display"] user: serenity::User,

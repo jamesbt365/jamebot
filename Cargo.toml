@@ -11,15 +11,29 @@ members = [
 
 [dependencies]
 jamebot_data = { path = "jamebot_data" }
-
-serenity = { git = "https://github.com/serenity-rs/serenity", branch = "next"}
-poise = { git = "https://github.com/serenity-rs/poise", branch = "serenity-next"} # matches serenity.
 tokio = { version = "1.29.1", features = ["macros", "signal", "rt-multi-thread"] }
 sqlx = { version = "0.7.1", features = ["macros", "runtime-tokio-rustls", "postgres"] }
 rand = "0.8.5"
-reqwest = "0.11.18"
+reqwest = { version = "0.12", features = ["json"] }
 serde = "1.0.179"
 image = "0.24.7"
 dashmap = "5.5.3"
 serde_json = "1.0.108"
 chrono = "0.4.31"
+
+poise = { workspace = true }
+serenity = { workspace = true }
+to-arraystring = "0.2.0"
+
+[workspace.dependencies.serenity]
+git = "https://github.com/serenity-rs/serenity"
+#path = "../serenity"
+features = ["temp_cache"]
+default-features = false
+branch = "next"
+
+# User apps on serenity-next & single command manual cooldowns
+[workspace.dependencies.poise]
+git = "https://github.com/jamesbt365/poise"
+features = ["cache", "unstable"]
+branch = "serenity-next-merged"

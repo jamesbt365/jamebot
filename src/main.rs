@@ -1,5 +1,5 @@
 #![warn(clippy::pedantic)]
-#![allow(clippy::wildcard_imports)]
+#![allow(clippy::wildcard_imports, clippy::unused_async)]
 
 mod commands;
 use commands::*;

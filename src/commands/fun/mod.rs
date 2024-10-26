@@ -48,7 +48,14 @@ const HUGS: &[&str] = &[
     "https://media.discordapp.net/attachments/829787267992256562/1050961805398245437/image0.jpg",
 ];
 /// Hug your friends :3
-#[poise::command(prefix_command, slash_command, category = "Fun", user_cooldown = "4")]
+#[poise::command(
+    prefix_command,
+    slash_command,
+    install_context = "Guild|User",
+    interaction_context = "Guild|BotDm|PrivateChannel",
+    category = "Fun",
+    user_cooldown = "4"
+)]
 pub async fn hug(
     ctx: Context<'_>,
     #[description = "The user to hug!! :3"] user: serenity::User,

@@ -1,7 +1,13 @@
 use crate::{Context, Error};
 
 // Post the link to the bots source code.
-#[poise::command(slash_command, prefix_command, category = "Meta")]
+#[poise::command(
+    slash_command,
+    prefix_command,
+    category = "Meta",
+    install_context = "Guild|User",
+    interaction_context = "Guild|BotDm|PrivateChannel"
+)]
 pub async fn source(ctx: Context<'_>) -> Result<(), Error> {
     ctx.say("<https://github.com/jamesbt365/jamebot>").await?;
     Ok(())
@@ -17,7 +23,13 @@ pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
 }
 
 /// Displays JameBot's uptime
-#[poise::command(slash_command, prefix_command, category = "Meta")]
+#[poise::command(
+    slash_command,
+    prefix_command,
+    category = "Meta",
+    install_context = "Guild|User",
+    interaction_context = "Guild|BotDm|PrivateChannel"
+)]
 pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
     let uptime = ctx.data().time_started.elapsed();
 
