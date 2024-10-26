@@ -1,6 +1,6 @@
 use crate::{Context, Error};
 use image::{DynamicImage, ImageBuffer, Rgba};
-use poise::serenity_prelude as serenity;
+use poise::serenity_prelude::{self as serenity, CreateAllowedMentions};
 
 #[poise::command(
     prefix_command,
@@ -37,8 +37,17 @@ pub async fn hex(
                 }
             }
         } else {
-            ctx.say(format!("Could not parse colour: {}", colour))
-                .await?;
+            let mentions = CreateAllowedMentions::new()
+                .everyone(false)
+                .all_roles(false)
+                .all_users(false);
+
+            ctx.send(
+                poise::CreateReply::new()
+                    .content(format!("Could not parse colour: {}", colour))
+                    .allowed_mentions(mentions),
+            )
+            .await?;
             return Ok(());
         }
     }
